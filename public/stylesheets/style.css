@@ -1,0 +1,23 @@
+#form {
+
+    margin-left: 50px;
+    width: 500px
+}
+
+.indent {
+
+    margin-left: 50px;
+}
+
+/* .move-down {
+    margin-top: 30px;
+} */
+.labels {
+     color: white;
+     background-color: red;
+     font-family: "Lucida Grande", "Arial", sans-serif;
+     font-size: 10px;
+     text-align: center;
+     width: 10px;
+     white-space: nowrap;
+   }

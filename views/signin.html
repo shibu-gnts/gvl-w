@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html ng-app>
+<head>
+<meta charset="UTF-8">
+<title> <%= title %></title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.16/angular.min.js"></script>
+  <script type="text/javascript"></script>
+</head>
+<body>
+<div class="container">
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"> <span class="glyphicon glyphicon-th-list"></span> G L V</a>
+    </div>
+    <div>
+      <ul class="nav navbar-nav">
+        <li ><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+        <li><a href="/customers"><span class="glyphicon glyphicon-user"></span> Customer</a></li>
+        <li><a href="/search"><span class="glyphicon glyphicon-search"></span> Search</a></li>
+        <li><a href="/map"><span class="glyphicon glyphicon-globe"></span> Map</a></li>
+  
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+       <li><a href="/:cc/userSignUp"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+        <li class="active"><a href="/:cc/userSignIn"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  <div class="row">
+    <div class="center-form panel">
+      <div class="panel-body">
+   <br>
+        <h2 class="text-center">Log in</h2>      <div class="jumbotron">
+        <form method="post" ng-submit="Signinsubmit()" ng-controller="SignInController"  class="form-horizontal" name="loginForm">
+        <% if (message.length > 0) { %>
+<p class="alert alert-info"><%= message %></p>
+<% } %> 
+          <div class="form-group has-feedback">
+           <label class="control-label col-sm-2" for="email">UserName:</label>
+      <div class="col-sm-10">
+            <input class="form-control input-lg" type="text" name="email" ng-model="email" placeholder="Email" required autofocus style="width: 300px">
+         </div>   <span class="ion-at form-control-feedback"></span>
+          </div>
+
+          <div class="form-group has-feedback">
+          <label class="control-label col-sm-2" for="password">Password:</label>
+      <div class="col-sm-10">
+         <input class="form-control input-lg"  type="password" name="password" ng-model="password" placeholder="Password" required  style="width: 300px">
+          </div>  <span class="ion-key form-control-feedback"></span>
+          </div>
+		<div class="form-group has-feedback">        
+      <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" ng-disabled="loginForm.$invalid" class="btn btn-lg btn-block btn-primary"  style="width: 300px" >Sign in</button>
+          <br/></div></div>
+        
+      <div class="form-group has-feedback"> 
+   <div class="col-sm-offset-2 col-sm-10"> 
+<div class="btn-group-vertical">
+   	<a href="/:cc/userSignInGoogle" class="btn btn-danger" style="width: 300px">Google Sign in</a><br>
+    <a href="/:cc/userSignInFacebook" class="btn btn-primary" style="width: 300px">Facebook Sign in</a><br>
+	<a href="userSignInTwitter" class="btn btn-info" style="width: 300px">Twitter Sign in</a><br>
+	</div></div></div>
+	<p class="text-center">
+            <a href="/:cc/forgetPassword">Forgot your password?</a>
+     </p>
+    <p class="text-center text-muted">
+            <small>Don't have an account yet? <a href="/:cc/userSignUp">Sign up</a></small>
+     </p></form>
+		
+    </div>
+  </div>
+</div></div></div>
+</body>
+<script> 
+angular.module('Signinsubmit', [])
+.controller('SignInController', ['$scope', function($scope) {
+    $scope.list = [];
+    $scope.email = email;
+    $scope.password = password;
+    $scope.Signinsubmit = function() {
+      if ($scope.text) {
+        $scope.list.push(this.text);
+        $scope.text = '';
+      }
+    };
+  }]);	</script>
+</html>

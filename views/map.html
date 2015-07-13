@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+  <title>GLV</title>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css"href="../public/stylesheets/style.css">
+    <style>
+    html, body {width:100%; height: 100%; margin: 0}
+    
+    div#map-container {width: 750px; height: 500px; position: relative; color: rgb(86, 86, 86); font-family: Roboto, Arial, sans-serif; -webkit-user-select: none; font-size: 11px; }
+    body div.custom-control { z-index: 1; direction: ltr; overflow: hidden; text-align: center; padding: 1px 6px; border-bottom-right-radius: 2px; border-top-right-radius: 2px; -webkit-background-clip: padding-box; border-width: 1px 1px 1px 0px; border-top-style: solid; border-right-style: solid; border-bottom-style: solid; border-top-color: rgba(0, 0, 0, 0.14902); border-right-color: rgba(0, 0, 0, 0.14902); border-bottom-color: rgba(0, 0, 0, 0.14902); -webkit-box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px; box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px; min-width: 41px; background-color: rgb(255, 255, 255); background-clip: padding-box; }
+    body div[full-screen-toggle] { cursor: pointer; position: absolute; top: 5px; right: 100px; }
+    body div[store-info] { position: absolute; display: none; top: 5px; right: 5px; bottom: 5px; width: 40%  }
+    body div[store-info] a.hide-link { float:right  }
+    body div[store-info] table { width: 100% }
+    body div[store-info] table td { text-align: left; padding: 5px; border: 1px solid #ccc  }
+    map {display:block; width:100%; height:100%;}
+    .labels {color: white;font-size: 36px;font-weight: bold;text-align: right;white-space: nowrap;}
+  </style>
+ 
+
+</head>
+
+<body ng-app="myApp">
+<div>
+
+<div ng-controller="TestCtrl">
+<form id="form" role="form">
+    <div class="form-group move-down">
+        <label for="Autocomplete">Place Search</label>
+       <input type="text" id="Autocomplete" class="form-control" ng-autocomplete ng-model="result1" details="details1" options="options1"/>
+    </div>
+   
+  <p>{{details1.vicinity}}</p>            
+  <div  ng-controller="mapController" >
+     <div store-info class="custom-control">Store Info</div>
+     <div id="map-container">
+    <script type="text/ng-template" id="store-info.html">
+    <a class="hide-link" ng-click="storeInfo.hide()" href="">X</a>
+    <h3> {{store.name}} </h3>
+    <table>
+      <tr>
+        <td> GLV </td> 
+        <td> {{store.glv_fairvalue_acre}} 
+        </td>
+      </tr>
+      <tr>
+        <td> Address </td> 
+        <td> 
+          desam: {{store.desam}} <br/>
+          Village: {{store.village}} <br/>
+          district: {{store.district}} <br/>
+          state: {{store.state_name}} <br/>
+        </td>
+      </tr>
+    </table>
+  </script>
+      <map zoom="7" center="{{result1}}"><marker position="current" icon="../public/images/pin3.png" centered="true"></marker></map>
+     </div>
+    </div>
+   </form>
+  </div> 
+ </div>
+ <script type="text/javascript" src="../public/src/angular.min.js"></script>
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+    <!-- build:js scripts/ng-map.min.js -->
+  <script src="../public/src/app.js"></script>
+  <script src="../public/src/directives/map_controller.js"></script>
+  <script src="../public/src/directives/map.js"></script>
+  <script src="../public/src/directives/marker.js"></script>
+  <script src="../public/src/services/geo_coder.js"></script>
+  <script src="../public/src/services/navigator_geolocation.js"></script>
+  <script src="../public/src/services/street_view.js"></script>
+  <script src="../public/src/services/attr2_options.js"></script>
+  <!-- endbuild -->
+  <script src="../public/src/markerclusterer.js"></script>
+  <script src="../public/js/ngAutocomplete.js"></script>
+  <script>
+  
+  var app = angular.module('myApp', ['ngMap','ngAutocomplete'] );
+  
+  
+  app.controller("TestCtrl",function ($scope) {
+		$scope.result1 = '';
+	    $scope.options1 = null;
+	    $scope.details1 = '';
+	    });
+  
+  
+  app.controller('mapController', function($scope, $http, StreetView ) {
+
+	$scope.map;
+    $scope.stores = [];
+    
+    $scope.$on('mapInitialized', function(event, evtMap) {
+    	
+      map = evtMap;
+      $scope.map = map;
+      console.log('loading scripts/data.json');
+      $http.get('http://localhost:3000/in/kerala').success( function(stores) {
+        for (var i=0; i<stores.length; i++) {
+        	
+          var store = stores[i];
+          /* var pin_label = store.glv_fairvalue_acre;
+          var pin_color = 'ff0000';
+          var pin_text_color = '0000ff';
+          var icon_url = 'http://chart.apis.google.com/chart?' +
+                         'chst=d_map_pin_letter_withshadow&chld=' +
+                         pin_label + '|' + pin_color + '|' +
+                         pin_text_color; */
+          store.position = new google.maps.LatLng(store.coordinates.latitude,store.coordinates.longitude);
+          store.title = store.glv_fairvalue_acre;
+          /* store.icon = icon_url; */
+          store.icon = "../public/images/pin1.png";
+          store.labelContent = "3";
+          store.labelClass = "labels";
+          store.labelAnchor = "4 30";
+              
+         var marker = new google.maps.Marker(store);
+         
+          console.log(store);
+          google.maps.event.addListener(marker, 'click', function() {
+            $scope.store = this;
+             StreetView.getPanorama(map).then(function(panoId) {
+              $scope.panoId = panoId;
+            });
+             
+            //map.setZoom(18);
+            map.setCenter(this.getPosition());
+            $scope.storeInfo.show();
+          });
+          google.maps.event.addListener(map, 'click', function() {
+            $scope.storeInfo.hide();
+          });
+
+          $scope.stores.push(marker); 
+        }
+        $scope.markerClusterer = new MarkerClusterer(map, $scope.stores, {});
+       });
+    });
+        
+  });
+ 
+  app.directive('storeInfo', function() {
+    var StoreInfo = function(s, e, a) {
+      this.scope = s;
+      this.element = e;
+      this.attrs = a;
+      this.show = function() {
+        this.element.css('display', 'block');
+        this.scope.$apply();
+      }
+      this.hide = function() {
+        this.element.css('display', 'none');
+      }
+    };
+    return {
+      templateUrl: 'store-info.html',
+      link: function(scope, e, a) {
+        scope.storeInfo= new StoreInfo(scope, e, a);
+      }
+    }
+  });
+	</script>
+</body>
+</html>
